@@ -1,1 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Concepts of Logic and Data Structures that are essential</title>
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<!--
+  data-page-id univoco per questo articolo, usato come chiave nel bin JSONBin.
+-->
+<body data-page-id="concepts-of-logic-and-data-structures-that-are-essential">
 
+  <header>
+    <nav><a href="../index.html">← Back to the blog</a></nav>
+  </header>
+
+  <div id="content">
+    <article>
+      <h1 class="article-title">Concepts of Logic and Data Structures that are essential</h1>
+      <span class="meta">Published on August 27, 2026</span>
+
+      <p>
+        Programming is based on logic. Many of the challenges we face in life often find
+        parallels in programming. While the problems may differ, they can often be solved
+        using similar patterns. Statements, problems, and solutions can be expressed using
+        symbols that belong to specific languages.
+      </p>
+
+      <h2>Language and Meta-Language Difference</h2>
+
+      <h3>Declarative Sentence</h3>
+      <p>
+        Every proposition can be viewed as a declaratory sentence. Abstracting its meaning,
+        we can define a declaratory sentence as an association-statement that can be either
+        TRUE or FALSE.
+      </p>
+      <!-- immagine: illustrazione del concetto di "declaration phrase" -->
+
+      <h3>Logical Connectives</h3>
+      <p>
+        At the core of language and programming languages are logical connectives. Logical
+        connectives serve to link two sentences together. There are various logical
+        connectives, each with a distinct meaning. In mathematics and computer science,
+        symbols are used to represent them.
+      </p>
+      <!-- immagine: elenco di tutti gli operatori logici -->
+      <p>
+        Logical connectives combine two sentences. Each sentence is evaluated to extract a
+        value known as the truth value. The process ultimately yields a result: either TRUE
+        or FALSE.
+      </p>
+      <!-- immagine: operatore logico, vero e falso -->
+
+      <h3>Truth Tables</h3>
+      <p>
+        Two sentences combined by a logical operator form a compound proposition. To
+        determine whether the compound proposition is true or false, truth tables are used.
+        Each connective has a table that specifies the truth value of the compound
+        proposition.
+      </p>
+      <!-- immagine: esempio di tabella di verità -->
+      <p>
+        Logic often uses truth tables, which represent in binary form information that was
+        originally analog in nature.
+      </p>
+      <p>
+        Conceptually, every statement in real life can be verified mathematically, thus
+        precisely and unambiguously. To do this, it is necessary to analyze the statement
+        and break it down into atomic propositions.
+      </p>
+      <p>
+        Once the atomic propositions are identified, truth tables can convert them into
+        numbers, creating a kind of network that starts from the bottom, that is, from the
+        atomic propositions, and gradually grows, forming a pyramid that analyzes
+        increasingly complex statements.
+      </p>
+      <p>
+        These statements are converted into 0 (false) and 1 (true), eventually reaching the
+        final proposition, which is then represented numerically and can be converted back
+        into its analog form.
+      </p>
+      <p>
+        Only with a numerical model stored in these truth tables is it possible to carry out
+        this process.
+      </p>
+
+      <h3>Parsing</h3>
+      <p>
+        To analyze a compound proposition, an abstraction process is followed. Essentially,
+        a compound proposition is divided into layers, each with a lower level of
+        complexity.
+      </p>
+      <p>
+        This abstraction refers to a tree. The tree represents the entire abstraction with
+        the different layers of difficulty.
+      </p>
+      <p>
+        At the base, we find the root, which is the formula itself. We may also find
+        various branches connecting the leaves, which are the atomic propositions. Once
+        these elements are identified, we can use the truth table to determine an output.
+      </p>
+      <!-- immagine: struttura ad albero -->
+      <p>
+        There are 3 branches, technically called atomic propositions. With 3 atomic
+        propositions, there are 8 possible cases in the truth table. This means, in
+        mathematical terms, that if we have <em>n</em> atomic propositions, the formula
+        will be 2 raised to the power of <em>n</em>, so the number of cases increases
+        sequentially.
+      </p>
+
+      <h3>Short Circuit</h3>
+      <p>
+        A short circuit shortens the path of the electric current. Essentially, a short
+        circuit is a procedure that allows the processor to skip steps to reach the result
+        more quickly.
+      </p>
+      <!-- immagine: esempio di short circuit -->
+
+      <h3>Equivalent Propositions</h3>
+      <p>
+        There is a symbol similar to the equals sign, which indicates that in all cases,
+        two variables have the same truth value. This means that either both are true or
+        both are false. There are also properties derived from this symbol that apply to
+        logical operators.
+      </p>
+      <!-- immagine: simbolo di equivalenza -->
+      <!-- immagine: proprietà commutativa e altre -->
+
+      <h3>De Morgan's Laws</h3>
+      <p>
+        De Morgan, a British mathematician, discovered that when working with logical
+        operators, one often encounters identical patterns in different situations. This
+        means that there are various ways to reach the same result.
+      </p>
+      <p>
+        De Morgan's procedures can significantly simplify the interpretation of a compound
+        proposition. Here is an example of how, using De Morgan's laws, a proposition
+        simplifies. Below, you will find the demonstration.
+      </p>
+      <!-- immagine: leggi di De Morgan -->
+      <!-- immagine: dimostrazione delle leggi di De Morgan -->
+
+      <h3>Implication</h3>
+      <p>
+        There is another type of logical operation. Essentially, we can relate two logical
+        propositions, stating that if one is true, then the other must also be true. The
+        first proposition is called the antecedent, and the second is called the
+        consequent.
+      </p>
+      <p>
+        The output is false only if the antecedent is true and the consequent is false. In
+        all other cases, the output is true.
+      </p>
+      <!-- immagine: concetto di implicazione -->
+
+      <h3>Logical Equivalences</h3>
+      <p>
+        Two logical propositions are said to be equivalent if they have the same truth
+        value in every possible situation.
+      </p>
+      <!-- immagine: concetto di doppia implicazione -->
+
+      <h3>Exclusive OR (XOR)</h3>
+      <p>
+        This logical operator is somewhat complex to understand and easy to confuse. XOR
+        (Exclusive OR) differs from OR in that it returns true only when one of the two
+        propositions is true, but not both. If both propositions are true, XOR returns
+        false.
+      </p>
+      <!-- immagine: differenza tra OR e XOR -->
+
+    </article>
+
+    <div class="visit-counter">
+      Visite a questa pagina: <span id="visit-count">...</span>
+    </div>
+
+    <a class="back-link" href="../index.html">← All articles</a>
+  </div>
+
+  <footer>
+    &copy; 2026 Il mio blog
+  </footer>
+
+  <script src="../script.js"></script>
+</body>
+</html>
