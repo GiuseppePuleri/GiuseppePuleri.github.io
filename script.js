@@ -21,7 +21,7 @@
    ============================================================ */
 
 const JSONBIN_CONFIG = {
-  binId: "6a903125f5f4af5e294985e2", // <-- sostituisci con l'ID del bin creato su jsonbin.io
+  binId: "6a903125f5f4af5e294985e2", // <-- hack me. i dont care about it :)
   accessKey: "$2a$10$6XD5KNkhRlcGVkCkGKeB8OzYcL2oDsfqemjwFkO542JmOIvDaICYK", // Access Key scoped a giuseppepuleri.github.io
   baseUrl: "https://api.jsonbin.io/v3/b",
 };
