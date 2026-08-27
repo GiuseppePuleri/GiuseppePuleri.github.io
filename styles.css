@@ -1,156 +1,213 @@
-/* ============================
-   Template base - Courier / Dark
-   ============================ */
+/* ==================================================
+   Reset base
+   ================================================== */
 
-:root {
-  --bg: #181A1B;
-  --fg: #E8E6E3;
-  --fg-muted: #9A9A9A;
-  --accent: #E8E6E3;
-  --max-width: 720px;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-html, body {
+html, body, div, span, h1, h2, h3, h4, h5, h6, p,
+blockquote, pre, a, abbr, address, code, del, dfn, em,
+img, ins, kbd, q, s, samp, small, strike, strong, sub, sup,
+tt, var, dl, dt, dd, ol, ul, li, fieldset, form, label,
+legend, table, caption, tbody, tfoot, thead, tr, th, td,
+article, header, footer, nav {
   margin: 0;
   padding: 0;
-  background: var(--bg);
-  color: var(--fg);
-  font-family: "Courier New", Courier, monospace;
-  line-height: 1.6;
+  border: 0;
+  outline: 0;
+  font-weight: inherit;
+  font-style: inherit;
+  font-size: 100%;
+  font-family: inherit;
+  vertical-align: baseline;
 }
+
+/* ==================================================
+   Base
+   ================================================== */
 
 body {
-  padding: 2rem 1.25rem 4rem;
+  font-family: 'Palatino', 'Palatino Linotype', serif;
+  text-rendering: optimizeLegibility;
+  background: #fff;
+  color: #333;
 }
 
-.wrapper {
-  max-width: var(--max-width);
+a {
+  text-decoration: none;
+  color: #666;
+}
+
+li {
+  list-style-type: none;
+}
+
+/* ==================================================
+   Header
+   ================================================== */
+
+header {
+  display: block;
+  position: relative;
+  padding: 15px 0 0 15px;
+  width: 100%;
   margin: 0 auto;
 }
 
-/* ---- Header / Titoli ---- */
-
-header.site-header {
-  margin-bottom: 2.5rem;
-  border-bottom: 1px solid #333;
-  padding-bottom: 1rem;
-}
-
-header.site-header a {
-  color: var(--fg);
-  text-decoration: none;
-}
-
-h1 {
-  font-size: 2rem;
-  margin: 0 0 0.5rem 0;
+header h1 {
+  display: inline;
+  font-size: 42px;
   font-weight: bold;
+  color: black;
 }
 
-h1.article-title {
-  font-size: 1.75rem;
-  margin-bottom: 0.25rem;
+header h1 a {
+  color: black;
 }
 
-p, li {
-  font-size: 1rem;
-  color: var(--fg);
+header p.meta,
+header h1 small {
+  font-size: 14px;
+  color: #999;
+  display: block;
+  margin-top: 4px;
 }
 
-.meta {
-  color: var(--fg-muted);
-  font-size: 0.85rem;
-  margin-bottom: 2rem;
+nav {
+  display: inline;
+  margin-bottom: 15px;
 }
 
-/* ---- Lista articoli ---- */
-
-ul.article-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+nav a {
+  margin-left: 20px;
 }
 
-ul.article-list li {
-  margin-bottom: 1.5rem;
-  border-bottom: 1px dashed #333;
-  padding-bottom: 1.5rem;
+/* ==================================================
+   Content
+   ================================================== */
+
+#content {
+  display: block;
+  width: 90%;
+  margin: 20px auto;
+  padding: 15px;
 }
 
-ul.article-list a.article-link {
-  color: var(--fg);
-  text-decoration: none;
-  font-size: 1.15rem;
-  font-weight: bold;
+@media screen and (min-width: 1024px) {
+  #content {
+    width: 800px;
+  }
+  header {
+    width: 800px;
+    margin: 0 auto;
+  }
 }
 
-ul.article-list a.article-link:hover {
-  text-decoration: underline;
+@media screen and (max-width: 800px) {
+  img {
+    max-width: 90%;
+  }
 }
 
-ul.article-list .excerpt {
-  color: var(--fg-muted);
-  font-size: 0.95rem;
-  margin-top: 0.35rem;
+/* ==================================================
+   Lista articoli (index)
+   ================================================== */
+
+.article-list li {
+  margin-bottom: 24px;
 }
 
-/* ---- Contenuto articolo ---- */
+.article-list h2 {
+  display: inline;
+  font-size: 22px;
+  color: black;
+}
+
+.article-list h2 a {
+  color: black;
+}
+
+.article-list p.excerpt {
+  font-size: 14px;
+  color: #999;
+  margin-top: 6px;
+  margin-left: 0;
+}
+
+/* ==================================================
+   Articolo singolo
+   ================================================== */
 
 article {
-  margin-top: 1rem;
+  display: block;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+article h1.article-title {
+  font-size: 30px;
+  color: black;
+  margin-bottom: 6px;
+}
+
+article .meta {
+  color: #999;
+  font-size: 14px;
+  margin-bottom: 20px;
+  display: block;
+}
+
+article p {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 14px;
 }
 
 article a {
-  color: var(--accent);
+  color: #666;
+  text-decoration: underline;
 }
 
-/* ---- Contatore visite ---- */
+/* ==================================================
+   Contatore visite
+   ================================================== */
 
 .visit-counter {
-  margin-top: 3rem;
-  padding-top: 1rem;
-  border-top: 1px solid #333;
-  color: var(--fg-muted);
-  font-size: 0.85rem;
+  margin-top: 40px;
+  padding-top: 10px;
+  border-top: 1px #ccc solid;
+  color: #999;
+  font-size: 14px;
 }
 
-/* ---- Back link ---- */
+/* ==================================================
+   Back link
+   ================================================== */
 
 .back-link {
-  display: inline-block;
-  margin-top: 2rem;
-  color: var(--fg-muted);
-  text-decoration: none;
+  display: block;
+  margin-top: 20px;
+  color: #666;
 }
 
 .back-link:hover {
   text-decoration: underline;
 }
 
-/* ---- Responsive ---- */
+/* ==================================================
+   Footer
+   ================================================== */
 
-@media (max-width: 600px) {
-  body {
-    padding: 1.25rem 1rem 3rem;
-  }
+footer {
+  display: block;
+  border-top: 1px #ccc solid;
+  text-align: center;
+  color: #ccc;
+  font-size: 14px;
+  margin: 30px auto 20px;
+  padding-top: 15px;
+  width: 90%;
+}
 
-  h1 {
-    font-size: 1.5rem;
-  }
-
-  h1.article-title {
-    font-size: 1.35rem;
-  }
-
-  p, li {
-    font-size: 0.95rem;
-  }
-
-  ul.article-list a.article-link {
-    font-size: 1.05rem;
+@media screen and (min-width: 1024px) {
+  footer {
+    width: 800px;
   }
 }
