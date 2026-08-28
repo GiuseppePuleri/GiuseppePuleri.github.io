@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Variable Scoping Rules in C++</title>
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<!--
+  data-page-id univoco per questo articolo, usato come chiave nel bin JSONBin.
+-->
+<body data-page-id="cpp-variable-scoping-rules">
+
+  <header>
+    <nav><a href="../index.html">← Back to the list</a></nav>
+  </header>
+
+  <div id="content">
+    <article>
+      <h1 class="article-title">Variable Scoping Rules in C++</h1>
+      <span class="meta">Published on January 28, 2025 - Visits: <span id="visit-count">...</span></span>
+
+      <p>
+        Variable scoping rules define the visibility and lifetime of a variable. The scope determines where and for how long a variable can be accessed. In C++, there are several scope categories, each serving specific design requirements. Below is a detailed overview of the main scoping rules along with essential practical tips for writing clean code.
+      </p>
+
+      <h2>Block Scope</h2>
+      <p>
+        A variable declared inside a <code>{}</code> block (e.g., within a function, loop, or conditional statement) is accessible only within that block. Once execution leaves the block, the variable is destroyed.
+      </p>
+
+      <pre><code>#include &lt;iostream&gt;
+
+int main() {
+    {   
+        // x is declared inside this block
+        int x = 20;
+        std::cout &lt;&lt; "x inside block: " &lt;&lt; x &lt;&lt; std::endl;
+    } 
+
+    // x is destroyed here
+    // std::cout &lt;&lt; "x outside block: " &lt;&lt; x &lt;&lt; std::endl; // Error: 'x' is out of scope!
+    return 0;
+}</code></pre>
+
+      <h2>Global Scope</h2>
+      <p>
+        A variable declared outside all functions has global scope and is accessible throughout the entire file.
+      </p>
+
+      <pre><code>#include &lt;iostream&gt;
+
+// Global variable (accessible anywhere in this file)
+int globalVar = 10;  
+
+void printGlobal() {
+    std::cout &lt;&lt; "Inside function: globalVar = " &lt;&lt; globalVar &lt;&lt; std::endl;
+}
+
+int main() {
+    std::cout &lt;&lt; "Inside main: globalVar = " &lt;&lt; globalVar &lt;&lt; std::endl;
+    
+    // Function can access globalVar
+    printGlobal();  
+
+    // Modifying the global variable
+    globalVar = 20; 
+
+    // Print variable again
+    std::cout &lt;&lt; "After modification: globalVar = " &lt;&lt; globalVar &lt;&lt; std::endl;
+
+    return 0;
+}</code></pre>
+
+      <p>
+        <strong>Note:</strong> The use of global variables is generally discouraged because it can lead to memory management issues and naming conflicts in larger programs.
+      </p>
+
+      <h2>Namespace Scope</h2>
+      <p>
+        In C++, variables and functions can be organized within a <code>namespace</code> to prevent naming collisions. A variable declared inside a namespace is accessible throughout that namespace scope or using the scope resolution operator (<code>::</code>).
+      </p>
+
+      <pre><code>#include &lt;iostream&gt;
+
+namespace MyNamespace {
+    int x = 10;  // Variable inside a namespace
+
+    void printX() {
+        std::cout &lt;&lt; "Inside namespace: x = " &lt;&lt; x &lt;&lt; std::endl;
+    }
+}
+
+int main() {
+    // Accessing the variable using the scope resolution operator (::)
+    std::cout &lt;&lt; "Access using scope resolution: x = " &lt;&lt; MyNamespace::x &lt;&lt; std::endl;
+
+    // Calling a function inside the namespace
+    MyNamespace::printX();
+
+    // Importing the entire namespace (use with caution)
+    using namespace MyNamespace;
+    std::cout &lt;&lt; "Access after 'using namespace': x = " &lt;&lt; x &lt;&lt; std::endl;
+
+    return 0;
+}</code></pre>
+
+      <p>
+        It is possible to import an entire namespace using <code>using namespace</code> or access individual members using the scope resolution operator (<code>::</code>). Avoid importing entire namespaces globally in header files to prevent scope pollution.
+      </p>
+
+      <h2>Class Scope</h2>
+      <p>
+        Members declared inside a class have class scope. A variable declared as <code>public</code> is accessible externally through an instance of the class. If declared as <code>private</code>, it can only be accessed by member functions of that class.
+      </p>
+
+      <pre><code>#include &lt;iostream&gt;
+
+class MyClass {
+public:
+    int publicVar = 10;  // Public variable (accessible from outside)
+    
+private:
+    int privateVar = 20; // Private variable (accessible only inside the class)
+    
+public:
+    void printPrivateVar() {
+        std::cout &lt;&lt; "Accessing privateVar inside class: " &lt;&lt; privateVar &lt;&lt; std::endl;
+    }
+};
+
+int main() {
+    MyClass obj;
+
+    // Accessing public variable directly
+    std::cout &lt;&lt; "Public variable: " &lt;&lt; obj.publicVar &lt;&lt; std::endl;
+
+    // Trying to access private variable directly causes a compilation error:
+    // std::cout &lt;&lt; "Private variable: " &lt;&lt; obj.privateVar &lt;&lt; std::endl; 
+
+    // Accessing private variable through a public method
+    obj.printPrivateVar();
+
+    return 0;
+}</code></pre>
+
+      <h2>Static Scope</h2>
+      <p>
+        Variables declared with the <code>static</code> keyword alter their lifetime or visibility depending on where they are defined:
+      </p>
+      <ul>
+        <li><strong>File scope:</strong> Accessible only within the file (translation unit) in which it is defined.</li>
+        <li><strong>Function scope:</strong> Retains its value across multiple function calls.</li>
+        <li><strong>Class scope:</strong> Shared across all instances of the class rather than being duplicated per object.</li>
+      </ul>
+
+      <pre><code>#include &lt;iostream&gt;
+
+// Static variable with file scope (accessible only in this file)
+static int fileScopeVar = 30;
+
+void staticInFunction() {
+    // Static variable with function scope (retains value between calls)
+    static int functionScopeVar = 10;
+    
+    std::cout &lt;&lt; "Function static variable: " &lt;&lt; functionScopeVar &lt;&lt; std::endl;
+    functionScopeVar++;  // Increments value with each function call
+}
+
+class MyClass {
+public:
+    // Static variable with class scope (shared among all objects)
+    static int classScopeVar;
+    
+    void displayClassVar() {
+        std::cout &lt;&lt; "Class static variable: " &lt;&lt; classScopeVar &lt;&lt; std::endl;
+    }
+};
+
+// Definition of the static variable outside the class
+int MyClass::classScopeVar = 50;
+
+int main() {
+    // Accessing file-scoped static variable
+    std::cout &lt;&lt; "File static variable: " &lt;&lt; fileScopeVar &lt;&lt; std::endl;
+
+    // Calling the function multiple times to show state retention
+    staticInFunction();  // First call
+    staticInFunction();  // Second call
+
+    // Accessing class-scoped static variable through objects
+    MyClass obj1, obj2;
+    obj1.displayClassVar();  // Both objects share the same static variable
+    obj2.displayClassVar();
+    
+    return 0;
+}</code></pre>
+
+      <h2>Dynamic Memory Allocation Scope</h2>
+      <p>
+        When memory is allocated on the heap (e.g., using <code>new</code>), its scope and lifetime are not automatically tied to enclosing code blocks. Heap memory remains active until it is explicitly deallocated using <code>delete</code>.
+      </p>
+
+      <pre><code>#include &lt;iostream&gt;
+
+int main() {
+    // Dynamically allocating memory for an integer on the heap
+    int* ptr = new int;  // 'new' allocates memory on the heap
+    *ptr = 50;           // Assigning a value to the allocated memory
+
+    std::cout &lt;&lt; "Value of dynamically allocated variable: " &lt;&lt; *ptr &lt;&lt; std::endl;
+
+    // Deallocating memory when done
+    delete ptr;   // 'delete' frees the dynamically allocated memory
+    ptr = nullptr; // Good practice: avoid dangling pointers
+
+    return 0;
+}</code></pre>
+
+      <h2>Advanced Scoping Concepts</h2>
+
+      <h3>Execution Environment &amp; Variable Binding</h3>
+      <p>
+        The execution environment is the context in which a program runs. Declaring a variable creates a binding between its identifier (name) and the memory location or object it refers to.
+      </p>
+      <p>
+        This name-object association depends on variable scope:
+      </p>
+      <ul>
+        <li><strong>Local variables:</strong> Valid only within the block where they are defined.</li>
+        <li><strong>Global variables:</strong> Remain valid throughout the entire program execution.</li>
+      </ul>
+
+      <h3>Variable Name Conflicts &amp; Shadowing</h3>
+      <p>
+        When an inner block declares a variable with the same name as a variable in an outer block, <strong>Shadowing</strong> occurs. The inner variable takes precedence within its block, temporarily hiding the outer variable. Once execution exits the inner block, the outer variable becomes visible again.
+      </p>
+
+      <pre><code>#include &lt;iostream&gt;
+
+int main() {
+    int x = 10;  // Outer variable
+    std::cout &lt;&lt; "Outer x: " &lt;&lt; x &lt;&lt; std::endl;
+
+    {
+        int x = 20;  // Inner variable (shadows outer x)
+        std::cout &lt;&lt; "Inner x: " &lt;&lt; x &lt;&lt; std::endl;
+    } // Inner x is destroyed here
+
+    std::cout &lt;&lt; "Outer x after inner block: " &lt;&lt; x &lt;&lt; std::endl;
+
+    return 0;
+}</code></pre>
+
+      <p><strong>Console Output:</strong></p>
+      <pre><code>Outer x: 10
+Inner x: 20
+Outer x after inner block: 10</code></pre>
+
+    </article>
+
+    <a class="back-link" href="../index.html">← All articles</a>
+  </div>
+
+  <footer>
+    &copy; Giuseppe Puleri
+  </footer>
+
+  <script src="../script.js"></script>
+</body>
+</html>
