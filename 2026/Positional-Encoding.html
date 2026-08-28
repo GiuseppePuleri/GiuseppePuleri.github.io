@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Positional Encoding</title>
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<!--
+  data-page-id univoco per questo articolo, usato come chiave nel bin JSONBin.
+-->
+<body data-page-id="positional-encoding">
+
+  <header>
+    <nav><a href="../index.html">← Back to the list</a></nav>
+  </header>
+
+  <div id="content">
+    <article>
+      <h1 class="article-title">Positional Encoding</h1>
+      <span class="meta">Published on November 30, 2024 - Visits: <span id="visit-count">...</span></span>
+
+      <p>
+        In computer science, there is a fundamental need to represent the entire analog world in digital form. The computer must be able to process images, numbers, text, and other complex types of data. Since the computer is a machine designed to handle complex tasks, its underlying foundation must remain simple.
+      </p>
+      <p>
+        From a simple foundation, we can conceptually build progressively more complex constructs. At its core, a computer operates entirely with sequences of <code>0</code> and <code>1</code>. Each sequence of bits represents a number in base 2, and thanks to encoding rules—particularly positional encoding—we can transform those numbers into meaningful information.
+      </p>
+
+      <h2>The Positional Numeral System</h2>
+      <p>
+        The positional numeral system is based on the concept that the value of a digit depends on its position. In the base-10 system, for example, we evaluate position powers of 10.
+      </p>
+
+      <img src="/img2026/giuseppe-puleri-Positional-Econding1.png" alt="Base 10 positional numeral system philosophy">
+
+      <p>
+        For humans, it is natural to think in base 10, largely due to having ten fingers. However, this characteristic does not apply to computers. A computer recognizes only the presence or absence of an electrical signal—<code>on</code> or <code>off</code> (high or low voltage). We use this physical binary state as the foundation to construct a base-2 numerical system.
+      </p>
+
+      <h2>Conversion from Base-2 to Base-10</h2>
+      <p>
+        Since humans reason in base 10 by convention, there must be a clear way to interpret and convert numbers from base 2 to base 10. We perform this conversion easily by multiplying each bit by <code>2<sup>n</sup></code> based on its positional index and summing the results.
+      </p>
+
+      <h2>Conversion from Base-10 to Base-2</h2>
+      <p>
+        The reverse requirement also exists: in the physical world, data entry happens in base 10, but we must transmit this information to the computer in base 2 using successive divisions by 2.
+      </p>
+
+      <img src="/img2026/giuseppe-puleri-Positional-Econding2.png" alt="Representation of information from base-2 to base-10">
+      <img src="/img2026/giuseppe-puleri-Positional-Econding3.png" alt="Conversion procedure from base-10 to base-2">
+
+      <h2>Base 16 (Hexadecimal)</h2>
+      <p>
+        A convenient middle ground between raw base 2 and human readability is base 16 (Hexadecimal). Base 16 provides a compact representation that is far easier to read and debug than long strings of binary digits.
+      </p>
+
+      <img src="/img2026/giuseppe-puleri-Positional-Econding4.png" alt="Representation of information in base 2, base 10, and base 16">
+
+      <p>
+        As shown above, the same numerical value represented in base 16 is much more compact. Technically, base 16 uses 16 distinct symbols: numbers <code>0</code> through <code>9</code> and letters <code>A</code> through <code>F</code> (where <code>A=10</code>, <code>B=11</code>, ..., <code>F=15</code>). Each symbol carries a positional weight.
+      </p>
+      <p>
+        Base 16 offers a structural advantage: <strong>each hexadecimal digit represents exactly 4 bits (a nibble)</strong>.
+      </p>
+
+      <img src="/img2026/giuseppe-puleri-Positional-Econding5.png" alt="Hexadecimal digit mapping to 4 binary bits">
+
+      <h2>Base 16 Conversion Methods</h2>
+      <p>
+        Earlier, we saw how the number <code>45</code> in base 10 is represented theoretically. One direct algorithm to convert base 10 directly to base 16 involves repeated division by 16:
+      </p>
+
+      <img src="/img2026/giuseppe-puleri-Positional-Econding6.png" alt="Direct base-10 to base-16 single algorithm conversion">
+
+      <p>
+        However, calculating large remainders manually with division by 16 can be error-prone. A more practical approach is to first convert from base 10 to base 2, and then convert base 2 directly to base 16.
+      </p>
+
+      <img src="/img2026/giuseppe-puleri-Positional-Econding7.png" alt="First step: Converting base-10 to base-2">
+
+      <p>
+        Once you have the binary representation, convert to hexadecimal by grouping the binary digits into sets of 4 bits (starting from the least significant bit on the right) and padding with leading zeros if necessary.
+      </p>
+
+      <img src="/img2026/giuseppe-puleri-Positional-Econding8.png" alt="Grouping binary bits into 4-bit sets for simple hexadecimal conversion">
+
+      <p>
+        This two-step grouping method makes converting between decimal and hexadecimal significantly simpler and less prone to manual calculation errors.
+      </p>
+
+    </article>
+
+    <a class="back-link" href="../index.html">← All articles</a>
+  </div>
+
+  <footer>
+    &copy; Giuseppe Puleri
+  </footer>
+
+  <script src="../script.js"></script>
+</body>
+</html>
