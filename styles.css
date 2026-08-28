@@ -56,11 +56,11 @@ header h1 {
   display: inline;
   font-size: 42px;
   font-weight: bold;
-  color: black;
+  color: white;
 }
 
 header h1 a {
-  color: black;
+  color: white;
 }
 
 header p.meta,
@@ -118,11 +118,11 @@ nav a {
 .article-list h2 {
   display: inline;
   font-size: 22px;
-  color: black;
+  color: white;
 }
 
 .article-list h2 a {
-  color: black;
+  color: white;
 }
 
 .article-list p.excerpt {
@@ -144,7 +144,7 @@ article {
 
 article h1.article-title {
   font-size: 30px;
-  color: black;
+  color: white;
   margin-bottom: 6px;
 }
 
