@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Titolo del primo articolo</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<!--
+  IMPORTANTE: data-page-id deve essere UNICO per ogni articolo.
+  E' la chiave usata nel JSON dei contatori su JSONBin.
+  Es: articolo-1, articolo-2, ecc.
+-->
+<body data-page-id="articolo-1">
+
+  <header>
+    <nav><a href="index.html">← Torna al blog</a></nav>
+  </header>
+
+  <div id="content">
+    <article>
+      <h1 class="article-title">Titolo del primo articolo</h1>
+      <span class="meta">Pubblicato il 27 Agosto 2026</span>
+
+      <p>
+        Questo e' il contenuto dell'articolo. Sostituisci questo testo
+        con il tuo contenuto reale, aggiungendo paragrafi, link o immagini
+        come preferisci.
+      </p>
+
+      <p>
+        Il template riprende lo stile chiaro con font Palatino, layout
+        centrato e responsive per mobile.
+      </p>
+    </article>
+
+    <div class="visit-counter">
+      Visite a questa pagina: <span id="visit-count">...</span>
+    </div>
+
+    <a class="back-link" href="index.html">← Tutti gli articoli</a>
+  </div>
+
+  <footer>
+    &copy; 2026 Il mio blog
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
