@@ -26,7 +26,7 @@ article, header, footer, nav {
 body {
   font-family: 'Palatino', 'Palatino Linotype', serif;
   text-rendering: optimizeLegibility;
-  background: ##201F1E;
+  background: #201F1E;
   color: #333;
   padding: 3% 10%;
 }
