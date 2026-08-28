@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Variable Scoping Rules in C++</title>
   <link rel="stylesheet" href="../styles.css">
+    <!-- CSS del tema Dark per Prism -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  
+  <!-- JS principale e modulo C++ -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
 </head>
 <!--
   data-page-id univoco per questo articolo, usato come chiave nel bin JSONBin.
@@ -29,7 +35,7 @@
         A variable declared inside a <code>{}</code> block (e.g., within a function, loop, or conditional statement) is accessible only within that block. Once execution leaves the block, the variable is destroyed.
       </p>
 
-      <pre><code>#include &lt;iostream&gt;
+      <pre><code class="language-cpp">#include &lt;iostream&gt;
 
 int main() {
     {   
@@ -48,7 +54,7 @@ int main() {
         A variable declared outside all functions has global scope and is accessible throughout the entire file.
       </p>
 
-      <pre><code>#include &lt;iostream&gt;
+      <pre><code class="language-cpp">#include &lt;iostream&gt;
 
 // Global variable (accessible anywhere in this file)
 int globalVar = 10;  
@@ -81,7 +87,7 @@ int main() {
         In C++, variables and functions can be organized within a <code>namespace</code> to prevent naming collisions. A variable declared inside a namespace is accessible throughout that namespace scope or using the scope resolution operator (<code>::</code>).
       </p>
 
-      <pre><code>#include &lt;iostream&gt;
+      <pre><code class="language-cpp">#include &lt;iostream&gt;
 
 namespace MyNamespace {
     int x = 10;  // Variable inside a namespace
@@ -114,7 +120,7 @@ int main() {
         Members declared inside a class have class scope. A variable declared as <code>public</code> is accessible externally through an instance of the class. If declared as <code>private</code>, it can only be accessed by member functions of that class.
       </p>
 
-      <pre><code>#include &lt;iostream&gt;
+      <pre><code class="language-cpp">#include &lt;iostream&gt;
 
 class MyClass {
 public:
@@ -154,7 +160,7 @@ int main() {
         <li><strong>Class scope:</strong> Shared across all instances of the class rather than being duplicated per object.</li>
       </ul>
 
-      <pre><code>#include &lt;iostream&gt;
+      <pre><code class="language-cpp">#include &lt;iostream&gt;
 
 // Static variable with file scope (accessible only in this file)
 static int fileScopeVar = 30;
@@ -201,7 +207,7 @@ int main() {
         When memory is allocated on the heap (e.g., using <code>new</code>), its scope and lifetime are not automatically tied to enclosing code blocks. Heap memory remains active until it is explicitly deallocated using <code>delete</code>.
       </p>
 
-      <pre><code>#include &lt;iostream&gt;
+      <pre><code class="language-cpp">#include &lt;iostream&gt;
 
 int main() {
     // Dynamically allocating memory for an integer on the heap
@@ -236,7 +242,7 @@ int main() {
         When an inner block declares a variable with the same name as a variable in an outer block, <strong>Shadowing</strong> occurs. The inner variable takes precedence within its block, temporarily hiding the outer variable. Once execution exits the inner block, the outer variable becomes visible again.
       </p>
 
-      <pre><code>#include &lt;iostream&gt;
+      <pre><code class="language-cpp">#include &lt;iostream&gt;
 
 int main() {
     int x = 10;  // Outer variable
@@ -253,7 +259,7 @@ int main() {
 }</code></pre>
 
       <p><strong>Console Output:</strong></p>
-      <pre><code>Outer x: 10
+      <pre><code class="language-cpp">Outer x: 10
 Inner x: 20
 Outer x after inner block: 10</code></pre>
 
