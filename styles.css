@@ -27,7 +27,7 @@ body {
   font-family: 'Palatino', 'Palatino Linotype', serif;
   text-rendering: optimizeLegibility;
   background: #201F1E!important;
-  color: #333;
+  color: white;
   padding: 3% 10%;
 }
 
@@ -157,7 +157,7 @@ article .meta {
 
 article p {
   font-size: 16px;
-  color: #333;
+  color: white;
   margin-bottom: 14px;
 }
 
@@ -173,7 +173,7 @@ article a {
 .visit-counter {
   margin-top: 40px;
   padding-top: 10px;
-  border-top: 1px #ccc solid;
+  border-top: 1px white solid;
   color: #999;
   font-size: 14px;
 }
