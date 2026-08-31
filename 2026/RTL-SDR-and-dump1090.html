@@ -5,59 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Technical Analysis of RTL-SDR and dump1090: Beyond Civil ADS-B Decoding</title>
   <link rel="stylesheet" href="../styles.css">
-  <style>
-    /* Custom styles for tables, diagrams, and quote blocks */
-    .article-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 20px 0;
-      font-size: 0.95em;
-    }
-    .article-table th, .article-table td {
-      border: 1px solid #ddd;
-      padding: 10px 12px;
-      text-align: left;
-    }
-    .article-table th {
-      background-color: #f4f6f8;
-      font-weight: bold;
-    }
-    .architecture-diagram {
-      border: 2px dashed #4a5568;
-      background-color: #f8fafc;
-      padding: 20px;
-      border-radius: 8px;
-      margin: 25px 0;
-      font-family: monospace;
-    }
-    .diagram-box {
-      border: 1px solid #2b6cb0;
-      background-color: #ebf8ff;
-      padding: 12px;
-      margin: 8px 0;
-      text-align: center;
-      border-radius: 4px;
-      font-weight: bold;
-    }
-    .signal-line {
-      border-top: 3px dashed #319795;
-      margin: 15px 0;
-      text-align: center;
-      font-size: 0.85em;
-      color: #234e52;
-      font-weight: bold;
-    }
-    .incipit-quote {
-      border-left: 4px solid #3182ce;
-      background-color: #f7fafc;
-      padding: 15px 20px;
-      margin: 20px 0;
-      font-style: italic;
-      color: #2d3748;
-      border-radius: 0 4px 4px 0;
-      line-height: 1.6;
-    }
-  </style>
 </head>
 <body data-page-id="rtl-sdr-dump1090-anomaly-detection">
 
@@ -169,16 +116,6 @@
       <p>
         To move beyond passive frame decoding and build a proactive airspace monitoring platform, system components should be decoupled into isolated processing modules:
       </p>
-
-      <div class="architecture-diagram">
-        <div class="diagram-box">Hardware SDR (RTL-SDR / HackRF / SDRplay)</div>
-        <div class="signal-line">═══ Raw I/Q Stream (USB / Network Buffer) ═══</div>
-        <div class="diagram-box">DSP & Multi-Decoder Engine (C++ / Multithreaded)</div>
-        <div class="signal-line">═══ Decoded Frames & FFT Spectral Data ═══</div>
-        <div class="diagram-box">Real-Time Anomaly Engine (Kinematic Patterns / Squawk / RF Levels)</div>
-        <div class="signal-line">═══ Alert Events & JSON State via WebSockets ═══</div>
-        <div class="diagram-box">Frontend Dashboard (Interactive Map / Spectrogram / Real-Time Alerts)</div>
-      </div>
 
       <h3>Trackable Anomaly Patterns</h3>
       <p>
