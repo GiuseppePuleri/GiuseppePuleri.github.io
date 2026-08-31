@@ -189,16 +189,6 @@
         JimPHP is structured into three discrete, decoupled object layers. Each stage acts as an isolated pipeline component communicating via structured data objects:
       </p>
 
-      <div class="architecture-diagram">
-        <div class="diagram-box">Raw PHP Code Stream (Inline / CLI / .php File)</div>
-        <div class="flow-line">═══ std::string Buffer ═══</div>
-        <div class="diagram-box">Lexer (Tokenizer)<br><small>[ Scanning, Character Classification & Multi-Char Operator Rules ]</small></div>
-        <div class="flow-line">═══ std::vector&lt;Token&gt; Stream ═══</div>
-        <div class="diagram-box">Parser (EBNF Grammar Engine)<br><small>[ Precedence Resolution & AST Node Construction ]</small></div>
-        <div class="flow-line">═══ std::unique_ptr&lt;ASTNode&gt; Tree ═══</div>
-        <div class="diagram-box">Interpreter (Evaluation Engine)<br><small>[ Tree Walking, SymbolTable Lookup & Value Operations ]</small></div>
-      </div>
-
       <h2>3. Layer 1: Lexical Analysis (The Lexer)</h2>
       <p>
         The Lexer reads raw PHP source strings and transforms them into a linear stream of strongly typed <code>Token</code> structs. Early lexical naive matching fails when encountering complex code containing punctuation, multi-character operators, variable sigils, and float literals.
