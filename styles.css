@@ -24,7 +24,7 @@ article, header, footer, nav {
    ================================================== */
 
 body {
-  font-family: 'Palatino', 'Palatino Linotype', serif;
+  font-family: 'Inconsolata', Courier;
   text-rendering: optimizeLegibility;
   background: #201F1E!important;
   color: white;
