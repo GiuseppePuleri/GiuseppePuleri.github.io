@@ -66,56 +66,6 @@
       line-height: 1.3;
       margin: 15px 0;
     }
-    /* Lexer Tool Styles */
-    .lexer-widget {
-      background: #f8fafc;
-      border: 1px solid #cbd5e1;
-      border-radius: 8px;
-      padding: 20px;
-      margin: 25px 0;
-    }
-    .lexer-widget h3 {
-      margin-top: 0;
-      color: #2d3748;
-    }
-    .lexer-widget textarea {
-      width: 100%;
-      height: 70px;
-      font-family: 'Courier New', Courier, monospace;
-      font-size: 0.95em;
-      padding: 10px;
-      border: 1px solid #cbd5e1;
-      border-radius: 6px;
-      box-sizing: border-box;
-      resize: vertical;
-      background: #ffffff;
-    }
-    .lexer-output {
-      margin-top: 15px;
-      background: #1a202c;
-      color: #e2e8f0;
-      padding: 15px;
-      border-radius: 6px;
-      font-family: 'Courier New', Courier, monospace;
-      font-size: 0.9em;
-      line-height: 1.6;
-    }
-    .lexer-row {
-      display: flex;
-      justify-content: space-between;
-      border-bottom: 1px solid #2d3748;
-      padding: 4px 0;
-    }
-    .lexer-row:last-child {
-      border-bottom: none;
-    }
-    .lexer-label {
-      color: #63b3ed;
-      font-weight: bold;
-    }
-    .lexer-value {
-      color: #ecc94b;
-    }
   </style>
 </head>
 <body data-page-id="jimphp-cpp-ast-interpreter">
@@ -195,12 +145,216 @@
       </p>
 
       <!-- Micro-tool JS Lexer -->
-      <div class="lexer-widget">
-        <h3>Interactive Lexer Demo</h3>
-        <p>Incolla o scrivi del codice PHP per analizzarne i token estratti in tempo reale:</p>
-        <textarea id="phpInput" oninput="analyzePhpCode()">$a = 10 + 5.5 * (3 - 1); echo $a;</textarea>
-        <div class="lexer-output" id="lexerResult"></div>
+      <!-- Interactive Sequential Lexer Widget -->
+      <div class="lexer-demo-card">
+        <div class="lexer-header">
+          <h3>Interactive PHP Lexer Stream</h3>
+          <span class="lexer-badge" id="tokenCount">0 Tokens</span>
+        </div>
+      
+        <p class="lexer-desc">
+          Scrivi il tuo codice PHP per visualizzare lo stream sequenziale dei token generati dal Lexer:
+        </p>
+      
+        <textarea id="phpLexerInput" spellcheck="false" oninput="runLexer()">echo 2;</textarea>
+      
+        <div class="lexer-output-container">
+          <div class="lexer-output-header">Token Stream Output</div>
+          <div id="lexerStream" class="token-stream">
+            <!-- I token sequenziali verranno inseriti qui -->
+          </div>
+        </div>
       </div>
+      
+      <style>
+        .lexer-demo-card {
+          background: #0f172a;
+          border: 1px solid #1e293b;
+          border-radius: 10px;
+          padding: 20px;
+          margin: 25px 0;
+          color: #f8fafc;
+          font-family: system-ui, -apple-system, sans-serif;
+        }
+        .lexer-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 8px;
+        }
+        .lexer-header h3 {
+          margin: 0;
+          font-size: 1.15rem;
+          color: #38bdf8;
+        }
+        .lexer-badge {
+          background: #1e293b;
+          color: #94a3b8;
+          padding: 3px 10px;
+          border-radius: 12px;
+          font-size: 0.8rem;
+          font-weight: 600;
+        }
+        .lexer-desc {
+          color: #94a3b8;
+          font-size: 0.9rem;
+          margin: 0 0 12px 0;
+        }
+        #phpLexerInput {
+          width: 100%;
+          height: 65px;
+          background: #1e293b;
+          border: 1px solid #334155;
+          border-radius: 6px;
+          color: #f1f5f9;
+          font-family: 'Fira Code', 'Courier New', monospace;
+          font-size: 0.95rem;
+          padding: 10px 12px;
+          box-sizing: border-box;
+          resize: vertical;
+          outline: none;
+          transition: border-color 0.2s;
+        }
+        #phpLexerInput:focus {
+          border-color: #38bdf8;
+        }
+        .lexer-output-container {
+          margin-top: 15px;
+          background: #020617;
+          border: 1px solid #1e293b;
+          border-radius: 6px;
+          overflow: hidden;
+        }
+        .lexer-output-header {
+          background: #1e293b;
+          color: #64748b;
+          font-size: 0.75rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          padding: 6px 12px;
+        }
+        .token-stream {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+          padding: 12px;
+          min-height: 48px;
+        }
+        /* Stili per i singoli Badge dei Token */
+        .token-chip {
+          display: inline-flex;
+          align-items: center;
+          background: #0f172a;
+          border: 1px solid #334155;
+          border-radius: 6px;
+          padding: 4px 8px;
+          font-family: 'Fira Code', 'Courier New', monospace;
+          font-size: 0.85rem;
+        }
+        .token-type {
+          font-size: 0.7rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          margin-right: 6px;
+          padding: 1px 4px;
+          border-radius: 3px;
+        }
+        .token-val {
+          color: #f8fafc;
+          font-weight: 600;
+        }
+      
+        /* Colorazione semantica per tipo di token */
+        .tok-INSTRUCTION { background: #0284c7; color: #fff; }
+        .tok-VARIABLE    { background: #a855f7; color: #fff; }
+        .tok-INT         { background: #f59e0b; color: #000; }
+        .tok-FLOAT       { background: #d97706; color: #fff; }
+        .tok-STRING      { background: #22c55e; color: #000; }
+        .tok-ASSIGNMENT  { background: #ec4899; color: #fff; }
+        .tok-OPERATOR    { background: #ef4444; color: #fff; }
+        .tok-PAREN       { background: #6366f1; color: #fff; }
+        .tok-PUNCT       { background: #475569; color: #fff; }
+        .tok-UNKNOWN     { background: #dc2626; color: #fff; }
+      </style>
+      
+      <script>
+      function runLexer() {
+        const code = document.getElementById('phpLexerInput').value;
+        const tokens = tokenizePhp(code);
+        
+        const container = document.getElementById('lexerStream');
+        const countBadge = document.getElementById('tokenCount');
+        
+        countBadge.textContent = `${tokens.length} Token${tokens.length === 1 ? '' : 's'}`;
+        
+        if (tokens.length === 0) {
+          container.innerHTML = '<span style="color: #475569; font-size: 0.85rem;">Nessun token trovato...</span>';
+          return;
+        }
+      
+        container.innerHTML = tokens.map(t => `
+          <div class="token-chip">
+            <span class="token-type tok-${t.type}">${t.type}</span>
+            <span class="token-val">${escapeHtml(t.value)}</span>
+          </div>
+        `).join('');
+      }
+      
+      function tokenizePhp(src) {
+        // Regole del Lexer coordinate in ordine di priorità
+        const rules = [
+          { type: 'VARIABLE',    regex: /^\$[a-zA-Z_][a-zA-Z0-9_]*/ },
+          { type: 'INSTRUCTION', regex: /^\b(echo|print|if|else|while|for|function|return)\b/ },
+          { type: 'FLOAT',       regex: /^\d+\.\d+/ },
+          { type: 'INT',         regex: /^\d+/ },
+          { type: 'STRING',      regex: /^("[^"]*"|'[^']*')/ },
+          { type: 'ASSIGNMENT',  regex: /^=(?![=>])/ },
+          { type: 'OPERATOR',    regex: /^(==|!=|<=|>=|&&|\|\||\+|\-|\*|\/|\%)/ },
+          { type: 'PAREN',       regex: /^[\(\)\[\]\{\}]/ },
+          { type: 'PUNCT',       regex: /^[;,]/ },
+          { type: 'WHITESPACE',  regex: /^\s+/ },
+          { type: 'UNKNOWN',     regex: /^./ }
+        ];
+      
+        let cursor = 0;
+        const tokens = [];
+      
+        while (cursor < src.length) {
+          const substring = src.slice(cursor);
+          let matched = false;
+      
+          for (const rule of rules) {
+            const match = rule.regex.exec(substring);
+            if (match) {
+              const val = match[0];
+              // Ignora gli spazi vuoti tra un token e l'altro
+              if (rule.type !== 'WHITESPACE') {
+                tokens.push({ type: rule.type, value: val });
+              }
+              cursor += val.length;
+              matched = true;
+              break;
+            }
+          }
+      
+          if (!matched) break; // Sicurezza anti-loop infinito
+        }
+      
+        return tokens;
+      }
+      
+      function escapeHtml(str) {
+        return str.replace(/&/g, "&amp;")
+                  .replace(/</g, "&lt;")
+                  .replace(/>/g, "&gt;")
+                  .replace(/"/g, "&quot;")
+                  .replace(/'/g, "&#039;");
+      }
+      
+      // Inizializzazione automatica all'avvio
+      document.addEventListener('DOMContentLoaded', runLexer);
+      </script>
 
       <p>JimPHP categorizes incoming characters into explicit lexical buckets:</p>
       <ul>
@@ -259,37 +413,5 @@
     &copy; Giuseppe Puleri
   </footer>
 
-  <script>
-    function analyzePhpCode() {
-      const code = document.getElementById('phpInput').value;
-
-      const variables = [...new Set(code.match(/\$[a-zA-Z_][a-zA-Z0-9_]*/g) || [])];
-      const floats = [...new Set(code.match(/\b\d+\.\d+\b/g) || [])];
-      
-      const allNumbers = code.match(/\b\d+(\.\d+)?\b/g) || [];
-      const integers = [...new Set(allNumbers.filter(num => !num.includes('.')))];
-
-      const binaryOps = [...new Set(code.match(/[\+\-\*\/]/g) || [])];
-      const assignments = [...new Set(code.match(/=(?![=>])/g) || [])];
-      const parentheses = [...new Set(code.match(/[\(\)]/g) || [])];
-      const instructions = [...new Set(code.match(/\b(echo|print|include|require)\b|;/g) || [])];
-
-      const formatList = (arr) => arr.length ? arr.join(' ') : '—';
-
-      const html = `
-        <div class="lexer-row"><span class="lexer-label">Variables ($a):</span> <span class="lexer-value">${formatList(variables)}</span></div>
-        <div class="lexer-row"><span class="lexer-label">Integer (10):</span> <span class="lexer-value">${formatList(integers)}</span></div>
-        <div class="lexer-row"><span class="lexer-label">Float (5.5):</span> <span class="lexer-value">${formatList(floats)}</span></div>
-        <div class="lexer-row"><span class="lexer-label">Binary operators (+ - * /):</span> <span class="lexer-value">${formatList(binaryOps)}</span></div>
-        <div class="lexer-row"><span class="lexer-label">Assignment:</span> <span class="lexer-value">${formatList(assignments)}</span></div>
-        <div class="lexer-row"><span class="lexer-label">Parentheses:</span> <span class="lexer-value">${formatList(parentheses)}</span></div>
-        <div class="lexer-row"><span class="lexer-label">Instructions (echo):</span> <span class="lexer-value">${formatList(instructions)}</span></div>
-      `;
-
-      document.getElementById('lexerResult').innerHTML = html;
-    }
-
-    document.addEventListener('DOMContentLoaded', analyzePhpCode);
-  </script>
 </body>
 </html>
