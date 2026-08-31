@@ -5,49 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Abstract Concepts about the Von Neumann Architecture</title>
   <link rel="stylesheet" href="../styles.css">
-  <style>
-    /* Stili inline opzionali integrativi per la resa di tabelle e schemi */
-    .article-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 20px 0;
-      font-size: 0.95em;
-    }
-    .article-table th, .article-table td {
-      border: 1px solid #ddd;
-      padding: 10px 12px;
-      text-align: left;
-    }
-    .article-table th {
-      background-color: #f4f6f8;
-      font-weight: bold;
-    }
-    .architecture-diagram {
-      border: 2px dashed #4a5568;
-      background-color: #f8fafc;
-      padding: 20px;
-      border-radius: 8px;
-      margin: 25px 0;
-      font-family: monospace;
-    }
-    .diagram-box {
-      border: 1px solid #2b6cb0;
-      background-color: #ebf8ff;
-      padding: 12px;
-      margin: 8px 0;
-      text-align: center;
-      border-radius: 4px;
-      font-weight: bold;
-    }
-    .bus-line {
-      border-top: 3px solid #e53e3e;
-      margin: 15px 0;
-      text-align: center;
-      font-size: 0.85em;
-      color: #9b2c2c;
-      font-weight: bold;
-    }
-  </style>
 </head>
 <body data-page-id="von-neumann-architecture-abstract-concepts">
 
@@ -170,15 +127,6 @@
       <p>
         The classic Von Neumann model divides a computing system into three major functional subsystems interconnected by a system bus:
       </p>
-
-      <div class="architecture-diagram">
-        <div class="diagram-box">Central Processing Unit (CPU)<br><small>[ Control Unit (CU) | Arithmetic Logic Unit (ALU) | Registers ]</small></div>
-        <div class="bus-line">═══ SYSTEM BUS (Address Bus | Data Bus | Control Bus) ═══</div>
-        <div style="display: flex; gap: 10px;">
-          <div class="diagram-box" style="flex: 1;">Main Memory (RAM)<br><small>[ Stored Programs & Data ]</small></div>
-          <div class="diagram-box" style="flex: 1;">Input / Output (I/O) Interfaces<br><small>[ Keyboard, Display, Storage, Network ]</small></div>
-        </div>
-      </div>
 
       <h3>1. Central Processing Unit (CPU)</h3>
       <p>
