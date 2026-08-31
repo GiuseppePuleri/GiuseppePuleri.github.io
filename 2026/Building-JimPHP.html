@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Building JimPHP: Architecting a Lightweight, AST-Based PHP Interpreter in C++17</title>
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    .article-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.95em;
+    }
+    .article-table th, .article-table td {
+      border: 1px solid #ddd;
+      padding: 10px 12px;
+      text-align: left;
+    }
+    .article-table th {
+      background-color: #ff000080;
+      font-weight: bold;
+    }
+    .architecture-diagram {
+      border: 2px dashed #4a5568;
+      background-color: #f8fafc;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 25px 0;
+      font-family: monospace;
+    }
+    .diagram-box {
+      border: 1px solid #2b6cb0;
+      background-color: #ebf8ff;
+      padding: 12px;
+      margin: 8px 0;
+      text-align: center;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+    .flow-line {
+      border-top: 3px dashed #319795;
+      margin: 15px 0;
+      text-align: center;
+      font-size: 0.85em;
+      color: #234e52;
+      font-weight: bold;
+    }
+    .code-block {
+      background-color: #1a202c;
+      color: #e2e8f0;
+      padding: 15px;
+      border-radius: 6px;
+      font-family: 'Courier New', Courier, monospace;
+      overflow-x: auto;
+      margin: 15px 0;
+      font-size: 0.9em;
+      line-height: 1.5;
+    }
+    .tree-diagram {
+      font-family: monospace;
+      white-space: pre;
+      background-color: #edf2f7;
+      padding: 15px;
+      border-radius: 6px;
+      line-height: 1.3;
+      margin: 15px 0;
+    }
+    /* Lexer Tool Styles */
+    .lexer-widget {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 25px 0;
+    }
+    .lexer-widget h3 {
+      margin-top: 0;
+      color: #2d3748;
+    }
+    .lexer-widget textarea {
+      width: 100%;
+      height: 70px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.95em;
+      padding: 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      box-sizing: border-box;
+      resize: vertical;
+      background: #ffffff;
+    }
+    .lexer-output {
+      margin-top: 15px;
+      background: #1a202c;
+      color: #e2e8f0;
+      padding: 15px;
+      border-radius: 6px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.9em;
+      line-height: 1.6;
+    }
+    .lexer-row {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #2d3748;
+      padding: 4px 0;
+    }
+    .lexer-row:last-child {
+      border-bottom: none;
+    }
+    .lexer-label {
+      color: #63b3ed;
+      font-weight: bold;
+    }
+    .lexer-value {
+      color: #ecc94b;
+    }
+  </style>
+</head>
+<body data-page-id="jimphp-cpp-ast-interpreter">
+
+  <header>
+    <nav><a href="../index.html">← Back to the list</a></nav>
+  </header>
+
+  <div id="content">
+    <article>
+      <h1 class="article-title">Building JimPHP: Architecting a Lightweight, AST-Based PHP Interpreter in C++17</h1>
+      <span class="meta">Published on November 27, 2024 - Visits: <span id="visit-count">...</span></span>
+
+      <p>
+        The PHP programming language powers a massive percentage of the modern web, largely driven by the production-grade Zend Engine. However, understanding how PHP code translates from raw text into runtime execution requires peeling back layers of compilation theory, memory management, and tree evaluation. Inspired by Salvatore Sanfilippo’s minimalist <strong>Jim Tcl</strong> interpreter, <strong>JimPHP</strong> is a lightweight, low-footprint implementation of PHP built in modern C++17.
+      </p>
+      <p>
+        While Jim Tcl achieves simplicity through string-oriented, runtime command substitution, JimPHP adopts a clean compiler-frontend separation: a dedicated <strong>Lexer</strong> for lexical scanning, a <strong>Parser</strong> for formal Abstract Syntax Tree (AST) construction driven by EBNF grammar, and an <strong>AST-walking Interpreter</strong> operating over an encapsulated symbol table.
+      </p>
+
+      <h2>1. Architectural Comparison: Jim Tcl vs. Zend Engine vs. JimPHP</h2>
+      <p>
+        To contextualize JimPHP’s execution model, we can compare how different interpretable environments process source code into evaluation:
+      </p>
+
+      <table class="article-table">
+        <thead>
+          <tr>
+            <th>Architecture Dimension</th>
+            <th>Jim Tcl (Salvatore Sanfilippo)</th>
+            <th>Zend Engine (PHP 8+)</th>
+            <th>JimPHP (C++17)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Primary Focus</strong></td>
+            <td>Embedded Tcl scripting with minimal footprint</td>
+            <td>High-performance web production runtime</td>
+            <td>Lightweight, transparent PHP subset execution</td>
+          </tr>
+          <tr>
+            <td><strong>Intermediate Representation</strong></td>
+            <td>None (String substitution / runtime evaluation)</td>
+            <td>AST $\rightarrow$ Zend Opcodes (Bytecode)</td>
+            <td><strong>Abstract Syntax Tree (AST)</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Execution Engine</strong></td>
+            <td>Direct string-command dispatcher</td>
+            <td>Virtual Machine (Zend VM) + JIT Compiler</td>
+            <td><strong>Recursive AST Tree-Walker</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Type System</strong></td>
+            <td>Everything is a String (EAM)</td>
+            <td>Dynamic `zval` union structures</td>
+            <td>Polymorphic C++ <code>Value</code> objects</td>
+          </tr>
+          <tr>
+            <td><strong>Memory & Dependencies</strong></td>
+            <td>ANSI C, zero dependencies</td>
+            <td>C/C++, complex memory pools</td>
+            <td><strong>C++17 STL, lightweight & zero external libs</strong></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>2. Three-Tier Modular System Architecture</h2>
+      <p>
+        JimPHP is structured into three discrete, decoupled object layers. Each stage acts as an isolated pipeline component communicating via structured data objects:
+      </p>
+
+      <div class="architecture-diagram">
+        <div class="diagram-box">Raw PHP Code Stream (Inline / CLI / .php File)</div>
+        <div class="flow-line">═══ std::string Buffer ═══</div>
+        <div class="diagram-box">Lexer (Tokenizer)<br><small>[ Scanning, Character Classification & Multi-Char Operator Rules ]</small></div>
+        <div class="flow-line">═══ std::vector&lt;Token&gt; Stream ═══</div>
+        <div class="diagram-box">Parser (EBNF Grammar Engine)<br><small>[ Precedence Resolution & AST Node Construction ]</small></div>
+        <div class="flow-line">═══ std::unique_ptr&lt;ASTNode&gt; Tree ═══</div>
+        <div class="diagram-box">Interpreter (Evaluation Engine)<br><small>[ Tree Walking, SymbolTable Lookup & Value Operations ]</small></div>
+      </div>
+
+      <h2>3. Layer 1: Lexical Analysis (The Lexer)</h2>
+      <p>
+        The Lexer reads raw PHP source strings and transforms them into a linear stream of strongly typed <code>Token</code> structs. Early lexical naive matching fails when encountering complex code containing punctuation, multi-character operators, variable sigils, and float literals.
+      </p>
+
+      <!-- Micro-tool JS Lexer -->
+      <div class="lexer-widget">
+        <h3>Interactive Lexer Demo</h3>
+        <p>Incolla o scrivi del codice PHP per analizzarne i token estratti in tempo reale:</p>
+        <textarea id="phpInput" oninput="analyzePhpCode()">$a = 10 + 5.5 * (3 - 1); echo $a;</textarea>
+        <div class="lexer-output" id="lexerResult"></div>
+      </div>
+
+      <p>JimPHP categorizes incoming characters into explicit lexical buckets:</p>
+      <ul>
+        <li><strong>Char Tokens:</strong> Identifiers and keywords (<code>a-z</code>, <code>A-Z</code>, <code>_</code>).</li>
+        <li><strong>Num Tokens:</strong> Integer and floating-point literals (<code>0-9</code>, <code>.</code>).</li>
+        <li><strong>Punctuation Tokens:</strong> Statement delimiters and separators (<code>.</code>, <code>,</code>, <code>:</code>, <code>;</code>).</li>
+        <li><strong>Operator Tokens:</strong> Arithmetic operations (<code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>=</code>, <code>%</code>, <code>^</code>).</li>
+        <li><strong>Parenthesis Tokens:</strong> Scope and grouping delimiters (<code>(</code>, <code>)</code>, <code>[</code>, <code>]</code>, <code>{</code>, <code>}</code>).</li>
+        <li><strong>Special Character & Compound Tokens:</strong> Variable sigils (<code>$</code>) and multi-character operators (<code>==</code>, <code>!=</code>, <code>&gt;=</code>, <code>&lt;=</code>, <code>&amp;&amp;</code>, <code>||</code>).</li>
+      </ul>
+
+      <h3>Lexical Transformation Example</h3>
+      <p>When processing a complex statement such as:</p>
+      <div class="code-block">$hello_user = 5.5 + 10 * (3 - 1);</div>
+      <p>The Lexer emits the following structured token sequence:</p>
+      <div class="code-block">
+[SCHAR: $] [CHAR: hello_user] [OPER: =] [NUM: 5.5] [OPER: +] 
+[NUM: 10] [OPER: *] [LPAREN: (] [NUM: 3] [OPER: -] [NUM: 1] [RPAREN: )] [PUNCT: ;]
+      </div>
+
+      <h2>4. Layer 2: Syntactic Parsing & AST Construction</h2>
+      <p>
+        Once tokenized, the stream is ingested by the <strong>Parser</strong>. The parser enforces operator precedence and constructs an <strong>Abstract Syntax Tree (AST)</strong>.
+      </p>
+
+      <div class="tree-diagram">
+         + (BinaryOpNode: ADD)
+        / \
+       /   \
+  (NUM: 3)  * (BinaryOpNode: MULTIPLY)
+           / \
+          /   \
+     (NUM: 5) (NUM: 2)
+      </div>
+
+      <h2>5. Layer 3: Evaluation & Symbol Management</h2>
+      <p>
+        JimPHP executes code via an AST-walking <code>Interpreter</code>, recursively evaluating <code>ASTNode</code> instances at runtime.
+      </p>
+
+      <h2>6. Conclusion</h2>
+      <p>
+        Building JimPHP demonstrates that writing an interpreter from scratch doesn't require massive computational frameworks. By combining a tokenizing Lexer, an EBNF-driven Parser, and an AST Interpreter in modern C++17, JimPHP achieves a modular implementation of core PHP syntax.
+      </p>
+      <blockquote class="reddit-embed-bq" style="height:316px" data-embed-height="316">
+      <a href="https://www.reddit.com/r/PHP/comments/1t901u2/my_journey_to_becoming_a_better_programmer_by/">My Journey to Becoming a Better Programmer by Building a PHP Interpreter in C++</a><br> by
+      <a href="https://www.reddit.com/user/Giuseppe_Puleri/">u/Giuseppe_Puleri</a> in
+      <a href="https://www.reddit.com/r/PHP/">PHP</a>
+      </blockquote><script async="" src="https://embed.reddit.com/widgets.js" charset="UTF-8"></script>
+    </article>
+
+    <a class="back-link" href="../index.html">← All articles</a>
+  </div>
+
+  <footer>
+    &copy; Giuseppe Puleri
+  </footer>
+
+  <script>
+    function analyzePhpCode() {
+      const code = document.getElementById('phpInput').value;
+
+      const variables = [...new Set(code.match(/\$[a-zA-Z_][a-zA-Z0-9_]*/g) || [])];
+      const floats = [...new Set(code.match(/\b\d+\.\d+\b/g) || [])];
+      
+      const allNumbers = code.match(/\b\d+(\.\d+)?\b/g) || [];
+      const integers = [...new Set(allNumbers.filter(num => !num.includes('.')))];
+
+      const binaryOps = [...new Set(code.match(/[\+\-\*\/]/g) || [])];
+      const assignments = [...new Set(code.match(/=(?![=>])/g) || [])];
+      const parentheses = [...new Set(code.match(/[\(\)]/g) || [])];
+      const instructions = [...new Set(code.match(/\b(echo|print|include|require)\b|;/g) || [])];
+
+      const formatList = (arr) => arr.length ? arr.join(' ') : '—';
+
+      const html = `
+        <div class="lexer-row"><span class="lexer-label">Variables ($a):</span> <span class="lexer-value">${formatList(variables)}</span></div>
+        <div class="lexer-row"><span class="lexer-label">Integer (10):</span> <span class="lexer-value">${formatList(integers)}</span></div>
+        <div class="lexer-row"><span class="lexer-label">Float (5.5):</span> <span class="lexer-value">${formatList(floats)}</span></div>
+        <div class="lexer-row"><span class="lexer-label">Binary operators (+ - * /):</span> <span class="lexer-value">${formatList(binaryOps)}</span></div>
+        <div class="lexer-row"><span class="lexer-label">Assignment:</span> <span class="lexer-value">${formatList(assignments)}</span></div>
+        <div class="lexer-row"><span class="lexer-label">Parentheses:</span> <span class="lexer-value">${formatList(parentheses)}</span></div>
+        <div class="lexer-row"><span class="lexer-label">Instructions (echo):</span> <span class="lexer-value">${formatList(instructions)}</span></div>
+      `;
+
+      document.getElementById('lexerResult').innerHTML = html;
+    }
+
+    document.addEventListener('DOMContentLoaded', analyzePhpCode);
+  </script>
+</body>
+</html>
