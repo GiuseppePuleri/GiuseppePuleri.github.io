@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Technical Analysis of RTL-SDR and dump1090: Beyond Civil ADS-B Decoding</title>
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    /* Custom styles for tables, diagrams, and quote blocks */
+    .article-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.95em;
+    }
+    .article-table th, .article-table td {
+      border: 1px solid #ddd;
+      padding: 10px 12px;
+      text-align: left;
+    }
+    .article-table th {
+      background-color: #f4f6f8;
+      font-weight: bold;
+    }
+    .architecture-diagram {
+      border: 2px dashed #4a5568;
+      background-color: #f8fafc;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 25px 0;
+      font-family: monospace;
+    }
+    .diagram-box {
+      border: 1px solid #2b6cb0;
+      background-color: #ebf8ff;
+      padding: 12px;
+      margin: 8px 0;
+      text-align: center;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+    .signal-line {
+      border-top: 3px dashed #319795;
+      margin: 15px 0;
+      text-align: center;
+      font-size: 0.85em;
+      color: #234e52;
+      font-weight: bold;
+    }
+    .incipit-quote {
+      border-left: 4px solid #3182ce;
+      background-color: #f7fafc;
+      padding: 15px 20px;
+      margin: 20px 0;
+      font-style: italic;
+      color: #2d3748;
+      border-radius: 0 4px 4px 0;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body data-page-id="rtl-sdr-dump1090-anomaly-detection">
+
+  <header>
+    <nav><a href="../index.html">← Back to the list</a></nav>
+  </header>
+
+  <div id="content">
+    <article>
+      <h1 class="article-title">Technical Analysis of RTL-SDR and dump1090: Beyond Civil ADS-B Decoding</h1>
+      <span class="meta">Published on November 27, 2024 - Visits: <span id="visit-count">...</span></span>
+
+      <div class="incipit-quote">
+        <p>
+          These days we hear so much about wars in the East and the West. Geographically, Italy has always played an important role, with its opening to the Mediterranean and strategic position. For months I've been interested in radio signals, and I realized how little material exists on the subject, or how niche this field is, especially in Italy. Everyone keeps talking about AI, but who talks about radio signals? I know it might be a forced question, yet my prediction, perhaps wrong, is that the skies will become increasingly central to attacks, given how easy it is to build kamikaze drones. Just look, for example, at the situation between Russia and Ukraine.
+        </p>
+        <p>
+          I have always been passionate about civil aviation. Now I am trying my hand at writing software that, using devices like RTL-SDR, alerts you if it detects suspicious signals through specific patterns. A simple example: if an aircraft abruptly changes altitude, it alerts you. Or: if it detects route anomalies, it flags the issue. Unlike dump1090, it doesn't limit itself to scanning civil frequencies, but also military ones (or at least it tries to), drones, and potential interference created. Thanks to a modular architecture, I can simultaneously scan signals, visualize them on a map, and tune into different frequencies. I don't claim to be doing something revolutionary. Surely there are private or military software systems that are far more sophisticated, with which Italy is equipped. Or maybe not. I just know that if someone thinks there are already better solutions than their own, they might as well stay on the couch watching TV, right?
+        </p>
+      </div>
+
+      <p>
+        Starting from this reflection, the need arises to analyze what concretely happens at an electromagnetic level in our skies and how we can extract actionable intelligence from radio signals. In this article, we will examine the <strong>RTL-SDR</strong> hardware, the signal mechanics of <strong>ADS-B and Mode S</strong> at 1090 MHz, the inner workings of the famous <strong>dump1090</strong> decoder, and the architectural design of a modular system for radiofrequency and kinematic anomaly detection.
+      </p>
+
+      <h2>1. Hardware Architecture: The RTL-SDR Dongle and I/Q Sampling</h2>
+      <p>
+        The <strong>RTL-SDR</strong> hardware originally originated as a low-cost USB DVB-T TV tuner based on the <strong>Realtek RTL2832U</strong> chipset paired with silicon tuners like the <strong>Rafael Micro R820T2</strong>. The revolution in Software Defined Radio occurred when the community discovered that the RTL2832U chip could bypass its internal hardware TV decoding and directly stream raw digitized <strong>I/Q (In-phase and Quadrature)</strong> samples at 8 bits to the host computer.
+      </p>
+      <p>
+        Every high-frequency signal $s(t)$ captured by the antenna is downconverted to an intermediate frequency and split into two orthogonal components:
+      </p>
+      <ul>
+        <li><strong>In-phase (I):</strong> $I(t) = A(t) \cos(\phi(t))$</li>
+        <li><strong>Quadrature (Q):</strong> $Q(t) = A(t) \sin(\phi(t))$</li>
+      </ul>
+      <p>
+        Representing each sample on the complex plane $Z = I + jQ$, host software can calculate instantaneous magnitude $A(t) = \sqrt{I^2 + Q^2}$ and phase $\phi(t) = \arctan(Q / I)$. This enables software demodulation of virtually any modulation scheme (AM, FM, SSB, PSK, PPM) without requiring analog hardware changes.
+      </p>
+
+      <h2>2. The ADS-B and Mode S Protocol (1090 MHz)</h2>
+      <p>
+        <strong>ADS-B (Automatic Dependent Surveillance - Broadcast)</strong> is the civil aviation standard by which aircraft periodically broadcast their GPS position, altitude, airspeed, callsign, and operational status over a carrier frequency of <strong>1090 MHz</strong>.
+      </p>
+      <p>
+        Mode S / ADS-B messages use <strong>Pulse Position Modulation (PPM)</strong> at a bit rate of 1 Mbit/s. Each frame transmitted has a strict timing structure:
+      </p>
+      <ul>
+        <li><strong>Synchronization Preamble (8 µs):</strong> A sequence of 4 high-energy pulses spaced with microsecond precision that signals the start of a valid message frame to the receiver.</li>
+        <li><strong>Data Payload (56 µs or 112 µs):</strong> A block containing either 56 bits (short Mode S) or 112 bits (Extended Squitter, DF17/DF18). The 112-bit payload contains the 24-bit unique ICAO aircraft address, Type Code, telemetry coordinates, and a 24-bit CRC polynomial field for error detection and correction.</li>
+      </ul>
+
+      <h2>3. Internal Mechanics of the dump1090 Decoder</h2>
+      <p>
+        <strong>dump1090</strong> is one of the most widely used lightweight ADS-B decoders, originally written in C by Salvatore Sanfilippo (antirez). Unlike heavy software frameworks like GNU Radio, dump1090 is tailored to minimize CPU overhead and execute in real time on resource-constrained embedded hardware such as the Raspberry Pi.
+      </p>
+
+      <h3>The dump1090 Processing Pipeline</h3>
+      <ol>
+        <li><strong>I/Q Buffer Acquisition:</strong> The RTL-SDR dongle is configured to sample at 2.0 MSps. The 8-bit unsigned I/Q stream is continuously loaded into a circular memory buffer.</li>
+        <li><strong>Magnitude Vector Conversion:</strong> The software converts every $(I, Q)$ byte pair into an absolute magnitude value $M = \sqrt{I^2 + Q^2}$. This converts complex signal numbers into an array of scalar amplitudes, accelerating pulse detection.</li>
+        <li><strong>Preamble Pattern Matching:</strong> dump1090 scans the magnitude array looking for energy peaks at specific pulse delays (0.0, 1.0, 3.5, and 4.5 microseconds). If the peak ratios satisfy preamble criteria and clear the squelch threshold, frame decoding begins.</li>
+        <li><strong>PPM Demodulation & CRC Checksum:</strong> For each of the subsequent 112 bits, the decoder compares energy levels in the first half-microsecond against the second half. Once assembled, the 24-bit CRC syndrome is verified to drop corrupted frames.</li>
+      </ol>
+
+      <h2>4. Limitations of dump1090 and the Need for Advanced Systems</h2>
+      <p>
+        While dump1090 excels at passive tracking of commercial airliners, it exhibits structural limitations when deployed for security monitoring or multi-band signal analysis:
+      </p>
+
+      <table class="article-table">
+        <thead>
+          <tr>
+            <th>Feature / Capability</th>
+            <th>Standard dump1090</th>
+            <th>Modular Anomaly Detection System</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Operating Frequencies</strong></td>
+            <td>Locked strictly to 1090 MHz (Civil Mode S).</td>
+            <td>Multi-frequency (1090 MHz, 978 MHz UAT, VHF Airband, 433/868 MHz VTX).</td>
+          </tr>
+          <tr>
+            <td><strong>Spectrum Processing</strong></td>
+            <td>Limited to pulse amplitude demodulation.</td>
+            <td>FFT spectral analysis, noise floor monitoring, and RF power profiling.</td>
+          </tr>
+          <tr>
+            <td><strong>Kinematic Analysis</strong></td>
+            <td>None (displays raw current position/altitude).</td>
+            <td>Pattern Matching: anomalous climb/descent rate ($|\Delta h/\Delta t|$), abrupt vector changes.</td>
+          </tr>
+          <tr>
+            <td><strong>Drone / Non-Civil Tracking</strong></td>
+            <td>Incapable if target lacks an active ADS-B transponder.</td>
+            <td>Detects uncoordinated RF transmissions, VTX video links, and spectral anomalies.</td>
+          </tr>
+          <tr>
+            <td><strong>Software Architecture</strong></td>
+            <td>Monolithic C program with embedded HTTP server.</td>
+            <td>Modular (C++ Multithreaded DSP Engine, WebSocket Event Bus, Reactive Dashboard).</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>5. Architecture of a Modular Anomaly Detection System</h2>
+      <p>
+        To move beyond passive frame decoding and build a proactive airspace monitoring platform, system components should be decoupled into isolated processing modules:
+      </p>
+
+      <div class="architecture-diagram">
+        <div class="diagram-box">Hardware SDR (RTL-SDR / HackRF / SDRplay)</div>
+        <div class="signal-line">═══ Raw I/Q Stream (USB / Network Buffer) ═══</div>
+        <div class="diagram-box">DSP & Multi-Decoder Engine (C++ / Multithreaded)</div>
+        <div class="signal-line">═══ Decoded Frames & FFT Spectral Data ═══</div>
+        <div class="diagram-box">Real-Time Anomaly Engine (Kinematic Patterns / Squawk / RF Levels)</div>
+        <div class="signal-line">═══ Alert Events & JSON State via WebSockets ═══</div>
+        <div class="diagram-box">Frontend Dashboard (Interactive Map / Spectrogram / Real-Time Alerts)</div>
+      </div>
+
+      <h3>Trackable Anomaly Patterns</h3>
+      <p>
+        The analytics engine continually processes target state vectors and RF spectrum metrics, triggering immediate alerts when anomalies occur:
+      </p>
+      <ul>
+        <li><strong>Abrupt Altitude Variations ($\Delta h / \Delta t$):</strong> Commercial aircraft follow predictable climb and descent gradients (typically within 2,000–3,000 ft/min). Rapid vertical rates exceeding safety thresholds flag potential dive maneuvers or emergency loss of control.</li>
+        <li><strong>Emergency Squawk Transponder Codes:</strong> Real-time interception of emergency Mode A/C squawks:
+          <ul>
+            <li><code>7500</code>: Aircraft Hijacking.</li>
+            <li><code>7600</code>: Radio Communication Failure.</li>
+            <li><code>7700</code>: General Emergency.</li>
+          </ul>
+        </li>
+        <li><strong>Sudden Signal Disappearance (Track Loss Anomaly):</strong> If an aircraft at high altitude stops transmitting without a corresponding decay in Received Signal Strength Indicator (RSSI), the system registers an unexpected track termination alert.</li>
+        <li><strong>RF Interference & Jamming Detection:</strong> Continuous Fast Fourier Transform (FFT) noise floor monitoring flags deliberate jamming attempts or high-power narrowband interference on aviation bands.</li>
+      </ul>
+
+      <h2>6. Conclusion</h2>
+      <p>
+        Active observation of the electromagnetic spectrum and airspace monitoring need not remain locked behind proprietary industrial or defense systems. The democratization of Software Defined Radio hardware, paired with custom signal processing algorithms and modular software design, unlocks massive opportunities for independent research and technical exploration.
+      </p>
+      <p>
+        Building custom tools, experimenting with real-time kinematic analysis, and probing beneath surface-level protocols is at the very heart of software engineering and curiosity.
+      </p>
+      <p>
+        What are your thoughts on SDR development and radio frequency monitoring? Feel free to share your questions and ideas in the comments section below!
+      </p>
+
+    </article>
+
+    <a class="back-link" href="../index.html">← All articles</a>
+  </div>
+
+  <footer>
+    &copy; Giuseppe Puleri
+  </footer>
+
+  <script src="../script.js"></script>
+</body>
+</html>
